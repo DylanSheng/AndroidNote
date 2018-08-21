@@ -45,4 +45,17 @@ Parcelable是Android中的序列化方式，使用略麻烦但是效率很高，
 Parcelable主要用在内存序列化上。
 将对象序列化到存储设备中，或者将对象序列化后通过网络传输，建议使用Serializable。
 
-<h2>2.3.3 Binder</h2>
+<h2>2.3.3 Binder---_not finished_</h2>
+从Android Framework角度来说，Binder是ServiceManager连接各种Manager（ActivityManager、WindowManager等）和相应ManagerService的桥梁；从Android应用层来说，Binder是客户端和服务端进行通讯的媒介。
+
+<h1>2.4 Android中的IPC方式</h1>
+<h2>2.4.1 Bundle</h2>
+四大组件中的（Activity, Service, Receiver） 都是支持在Intent中传递Bundle数据的。因为Bundle实现了Parcelable。但并不支持所有类型数据。
+<h2>2.4.2 文件共享</h2>
+_Windows有排斥锁，但是Linux对读写并发没有限制_
+适合对数据同步要求不高的进程之间通信，并且要妥善处理读写并发的问题。
+SharedPreference是特例，不建议多进程使用。
+<h2>2.4.3 Messenger</h2>
+<h2>2.4.4 AIDL</h2>
+<h2>2.4.5 ContentProvider</h2>
+<h2>2.4.6 Socket</h2>
