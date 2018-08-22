@@ -56,6 +56,11 @@ _Windows有排斥锁，但是Linux对读写并发没有限制_
 适合对数据同步要求不高的进程之间通信，并且要妥善处理读写并发的问题。
 SharedPreference是特例，不建议多进程使用。
 <h2>2.4.3 Messenger</h2>
+Messenger是一种轻量级IPC方案，它的底层实现是AIDL。每次处理一个请求，因此在服务端不用考虑线程同步的问题。
+![alt text](/Images/Messengers.png)
+
+<h3>（1） 服务端进程</h3>
+<h3>（2） 客户端进程</h3>
 <h2>2.4.4 AIDL</h2>
 <h2>2.4.5 ContentProvider</h2>
 <h2>2.4.6 Socket</h2>
