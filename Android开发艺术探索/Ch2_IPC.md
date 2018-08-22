@@ -57,7 +57,7 @@ _Windows有排斥锁，但是Linux对读写并发没有限制_
 SharedPreference是特例，不建议多进程使用。
 <h2>2.4.3 Messenger</h2>
 Messenger是一种轻量级IPC方案，它的底层实现是AIDL。每次处理一个请求，因此在服务端不用考虑线程同步的问题。
-![alt text](/Images/Messengers.png)
+![alt text](https://github.com/DylanSheng/AndroidNote/blob/master/Android开发艺术探索/Images/Messengers.png)
 
 <h3>（1） 服务端进程</h3>
 <h3>（2） 客户端进程</h3>
