@@ -32,3 +32,32 @@ public void set(T value) {
 ```
 
 <h2>10.2.2 MessageQueue</h2>
+MessageQueue主要包含两个操作：插入和读取。本质是Singly Linked List，这样的话插入和删除是O(1)。
+
+``
+_“… the volatile modifier guarantees that any thread that reads a field will see the most recently written value.” - Josh Bloch_
+``
+
+next方法是一个无限循环的方法，如果消息队列中没有消息，那么next方法会一直阻塞在这里。当有新消息到来时，next方法会返回这条消息并将其从单链表中移除。
+
+<h2>10.2.3 Looper</h2>
+Looper会不停地从MessageQueue中查看是否有新消息。如果有新消息就会立刻处理，否则就一直阻塞在那里。
+通过Looper.prepare()即可为当前线程创建一个Looper，接着通过Looper.loop()来开启消息循环。
+```java
+  new Thread("Thread#2") {
+    @Override
+    public void run() {
+      Looper.prepare();
+      Handler handler = new Handler();
+      Looper.loop();
+    };
+  }.start();
+```
+Looper除了prepare方法外，还提供了prepareMainLooper方法，这个方法主要是给主线程也就是ActivityThread创建Looper用的。通过它可以在任何地方获取到主线程的Looper。
+quit会直接退出Looper，而quitSafely只是设定一个退出标记，然后把消息队列中的已有消息处理完毕后才安全地退出。建议不需要的时候终止Looper。
+
+<h3>10.2.4 Handler</h3>
+Handler发送消息的过程仅仅是向消息队列中插入了一条消息，MessageQueue的next方法就会返回这条消息给Looper，Looper收到消息后就开始处理了，最终消息由Looper交给Handler处理，即Handler的dispatchMessage方法会被调用，这时Handler就进入了处理消息的阶段。
+Handler的处理方式。首先，检查Message的callback是否为null，不为null就通过handleCallback来处理消息。Message的callback是一个Runnable对象。其次，检查mCallback是否为null，不为null就调用mCallback的handleMessage方法来处理消息。
+
+![Alt text](Images/Handler消息处理.png?raw=true "Handler消息处理")
