@@ -61,3 +61,8 @@ Handler发送消息的过程仅仅是向消息队列中插入了一条消息，M
 Handler的处理方式。首先，检查Message的callback是否为null，不为null就通过handleCallback来处理消息。Message的callback是一个Runnable对象。其次，检查mCallback是否为null，不为null就调用mCallback的handleMessage方法来处理消息。
 
 ![Alt text](Images/Handler消息处理.png?raw=true "Handler消息处理")
+
+<h2>10.3 主线程的消息循环</h2>
+Android的主线程即使ActivityThread，主线程的入口方法为main，在main方法中系统会通过Looper.prepareMainLooper()来创建主线程的Looper以及MessageQueue，并通过Looper.loop()来开启主线程的消息循环。
+主线程的消息循环开始了以后，ActivityThread还需要一个Handler来和消息队列进行交互，这个Handler就是ActivityThread.H，它内部定义了一组消息类型，主要包含了四大组件的启动和停止等过程。
+ActivityThread通过ApplicationThread的请求后会回调ApplicationThread中的Binder方法，然后ApplicationThread会向H发送消息，H收到消息后会将ApplicationThread中的逻辑切换到ActivityThread中去执行，即切换到主线程中去执行，这个过成就是主线程的消息循环模型。
