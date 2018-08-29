@@ -55,5 +55,85 @@ class MainActivity : AppCompatActivity() {
     }
   }
 }
+```
 
+一个AsyncTask对象只能执行一次，即只能调用一次execute()，否则会报运行时异常。AsyncTasks采用一个线程来串行执行任务。我们仍然可以通过AsyncTask()的executeOnExecutor方法来并行地执行任务。
+
+”至少在Android-23 SDK里面，多个AsyncTask对象是串行执行的。“ https://blog.csdn.net/zj510/article/details/51622597
+SDK 28也是串行
+
+
+From AsyncTask.java
+```java
+/**
+ * An {@link Executor} that executes tasks one at a time in serial
+ * order.  This serialization is global to a particular process.
+ */
+public static final Executor SERIAL_EXECUTOR = new SerialExecutor();
+private static volatile Executor sDefaultExecutor = SERIAL_EXECUTOR;
+//sDefaultExecutor 实现了 the SerialExecutor.
+
+@MainThread
+public static void execute(Runnable runnable) {
+    sDefaultExecutor.execute(runnable);
+}
+
+@MainThread
+public final AsyncTask<Params, Progress, Result> executeOnExecutor(Executor exec,
+        Params... params) {
+    if (mStatus != Status.PENDING) {
+        switch (mStatus) {
+            case RUNNING:
+                throw new IllegalStateException("Cannot execute task:"
+                        + " the task is already running.");
+            case FINISHED:
+                throw new IllegalStateException("Cannot execute task:"
+                        + " the task has already been executed "
+                        + "(a task can be executed only once)");
+        }
+    }
+
+    mStatus = Status.RUNNING;
+
+    onPreExecute();
+
+    mWorker.mParams = params;
+    exec.execute(mFuture);
+
+    return this;
+}
+
+//很明显是用一个ArrayDeque来schedule。
+private static class SerialExecutor implements Executor {
+    final ArrayDeque<Runnable> mTasks = new ArrayDeque<Runnable>();
+    Runnable mActive;
+
+    public synchronized void execute(final Runnable r) {
+        mTasks.offer(new Runnable() {
+            public void run() {
+                try {
+                    r.run();
+                } finally {
+                    scheduleNext();
+                }
+            }
+        });
+        if (mActive == null) {
+            scheduleNext();
+        }
+    }
+
+    protected synchronized void scheduleNext() {
+        if ((mActive = mTasks.poll()) != null) {
+            THREAD_POOL_EXECUTOR.execute(mActive);
+        }
+    }
+}
+```
+
+From Executor.java
+```Java
+public interface Executor {
+  void execute(Runnable command);
+}
 ```
