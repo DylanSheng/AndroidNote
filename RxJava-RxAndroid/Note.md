@@ -1,4 +1,4 @@
-<h1>RxJava/RxAndroid</h1>
+<h1>RxJava/RxAndroid 2.0</h1>
 
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
       public void onNext(Integer integer) {
         Log.e("Test", "i = " + integer);
         textView.setText(integer.toString());
-      }
+      }打印字符串数组
 
       @Override
       public void onError(Throwable t) {
@@ -83,7 +83,7 @@ Flowable 的异步缓存池不同于 Observable，Observable的异步缓存池�
 `DROP`：这种策略模式下如果异步缓存池满了，会丢掉将要放入缓存池中的数据。
 `LATEST`：这种策略模式下与 Drop 策略一样，如果缓存池满了，会丢掉将要放入缓存池中的数据，不同的是，不管缓存池的状态如何，LATEST都会将最后一条数据强行放入缓存池中。
 
-`request(long n)` 用于发起<b>接收数据</b>的请求，如果不调用这个方法，虽然被观察者会正常发送数据，但是观察者是不会去接收数据的。参数 n 代表请求的数据量。
+`request(long n)` 用于发起**接收数据**的请求，如果不调用这个方法，虽然被观察者会正常发送数据，但是观察者是不会去接收数据的。参数 n 代表请求的数据量。
 `cancel()` 方法用于取消订阅关系。
 
 Observable/Observer
@@ -110,3 +110,18 @@ Maybe可发射一条单一的数据，以及发射一条完成通知，或者一
 Disposable : It is used to dispose the subscription when an observer no longer wants to listen to Observable. For avoiding memory leaks.
 CompositeDisposable : This can maintain list of subscriptions in a poll and dispose them at once. We use the .add() to add subscriptions to it.
 We can unsubscribe or dispose the subscriptions on destroy.
+
+https://medium.com/mindorks/rxjava-operator-map-vs-flatmap-427c09678784
+<h3>Map</h3>
+
+Map transforms the items emitted by an Observable by applying a function to each item.
+![Alt text](Images/map.png?raw=true "Map")
+
+FlatMap
+
+FlatMap transforms the items emitted by an Observable into Observables.
+![Alt text](Images/flatmap.png?raw=true "FlatMap")
+So, the main difference between Map and FlatMap that FlatMap returns an observable itself, so it is used to map over **asynchronous** operations.
+
+https://stackoverflow.com/questions/22847105/when-do-you-use-map-vs-flatmap-in-rxjava
+map transform one event to another. flatMap transform one event to zero or more event.
